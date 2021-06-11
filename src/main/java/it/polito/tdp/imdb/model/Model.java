@@ -17,7 +17,7 @@ public class Model {
 	ImdbDAO dao;
 	Graph<Director,DefaultWeightedEdge> grafo;
 	Map<Integer,Director> idMap;
-	List<RegistiAdiacenti> soluzione;
+	List<Director> soluzione;
 	int best;
 	
 	public Model() {
@@ -59,33 +59,34 @@ public class Model {
 		return direttori;
 	}
 	
-	public List<RegistiAdiacenti> getCammino(int c,Director partenza){
-		soluzione=new ArrayList<RegistiAdiacenti>();
+	public List<Director> getCammino(int c,Director partenza){
+		soluzione=new ArrayList<Director>();
 		best=0;
-		List<RegistiAdiacenti> parziale=new ArrayList<RegistiAdiacenti>();
-		List<RegistiAdiacenti> disponibili=this.getAdiacenze(partenza);
-		cercaSoluzione(parziale,c,disponibili);
+		int tot=0;
+		List<Director> parziale=new ArrayList<Director>();
+		parziale.add(partenza);
+		cercaSoluzione(parziale,c,tot,1);
 		return soluzione;
 	}
 
-	private void cercaSoluzione(List<RegistiAdiacenti> parziale, int c, List<RegistiAdiacenti> disponibili) {
-		int totale=0;
-		for(RegistiAdiacenti d: parziale) {
-			totale+=d.getPeso();
-		}
+	private void cercaSoluzione(List<Director> parziale, int c, int tot,int L) {
 		//caso terminale
-		if(totale>c) {
+		if(tot>c) {
 			return ;
 		}else if(parziale.size()>best) {
 			best=parziale.size();
 			soluzione=new ArrayList<>(parziale);
 		}
+		if(L==grafo.vertexSet().size())
+			return ;
+		
+		List<RegistiAdiacenti>disponibili=this.getAdiacenze(parziale.get(parziale.size()-1));
 			for(RegistiAdiacenti d: disponibili) {
-				if(totale+d.getPeso()<=c && !parziale.contains(d)) {
-					parziale.add(d);
-					cercaSoluzione(parziale,c,disponibili);
+				if(d.getPeso()<=c && !parziale.contains(d.getD())) {
+					parziale.add(d.getD());
+					cercaSoluzione(parziale,c,tot+d.getPeso(),L+1);
 					//backTracking
-					parziale.remove(d);
+					parziale.remove(d.getD());
 				
 			}
 		}

@@ -82,8 +82,8 @@ public class FXMLController {
     	try {
     	int c=Integer.parseInt(txtAttoriCondivisi.getText());
     	if(boxRegista.getValue()!=null) {
-    	List<RegistiAdiacenti> result=model.getCammino(c, boxRegista.getValue());
-    	for(RegistiAdiacenti d:result) {
+    	List<Director> result=model.getCammino(c, boxRegista.getValue());
+    	for(Director d:result) {
     		txtResult.appendText(d+"\n");
     	}
     	}else {
